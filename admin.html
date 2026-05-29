@@ -1,0 +1,336 @@
+<!-- =========================
+ ADMIN PANEL SOURCE CODE
+ SAVE FILE AS admin.html
+========================= -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Panel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f4f4f4;
+}
+
+/* LOGIN */
+
+.login-page{
+width:100%;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#111,#ff0000);
+}
+
+.login-box{
+width:400px;
+background:#fff;
+padding:40px;
+border-radius:25px;
+box-shadow:0 10px 40px rgba(0,0,0,0.3);
+}
+
+.login-box h2{
+text-align:center;
+margin-bottom:30px;
+font-size:35px;
+}
+
+.login-box input{
+width:100%;
+padding:15px;
+margin-bottom:20px;
+border-radius:12px;
+border:1px solid #ccc;
+}
+
+.login-box button{
+width:100%;
+padding:15px;
+border:none;
+border-radius:12px;
+background:#ff0000;
+color:#fff;
+font-size:17px;
+font-weight:700;
+cursor:pointer;
+}
+
+.admin-panel{
+display:none;
+padding:50px 5%;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:40px;
+}
+
+.logout{
+padding:12px 25px;
+background:#ff0000;
+border:none;
+border-radius:12px;
+color:#fff;
+font-weight:700;
+cursor:pointer;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+background:#fff;
+border-radius:20px;
+overflow:hidden;
+}
+
+table th{
+background:#ff0000;
+color:#fff;
+padding:18px;
+}
+
+table td{
+padding:15px;
+text-align:center;
+border-bottom:1px solid #eee;
+}
+
+.action-btn{
+padding:8px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+margin:2px;
+}
+
+.edit{
+background:#ffd000;
+}
+
+.delete{
+background:#ff4d4d;
+color:#fff;
+}
+
+.save{
+background:#00c853;
+color:#fff;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div class="login-page" id="loginPage">
+
+<div class="login-box">
+
+<h2>Admin Login</h2>
+
+<input type="text" id="username" placeholder="Username">
+
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">
+Login
+</button>
+
+</div>
+
+</div>
+
+<!-- PANEL -->
+
+<div class="admin-panel" id="adminPanel">
+
+<div class="top">
+
+<h1>
+Student Database
+</h1>
+
+<button class="logout" onclick="logout()">
+Logout
+</button>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Name</th>
+<th>Mobile</th>
+<th>Email</th>
+<th>Course</th>
+<th>Message</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="studentTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+/* LOGIN */
+
+const adminUser = "mohit";
+const adminPass = "12345";
+
+function login(){
+
+let user = document.getElementById("username").value;
+
+let pass = document.getElementById("password").value;
+
+if(user === adminUser && pass === adminPass){
+
+document.getElementById("loginPage").style.display = "none";
+
+document.getElementById("adminPanel").style.display = "block";
+
+loadStudents();
+
+}
+else{
+
+alert("Wrong Username or Password");
+
+}
+
+}
+
+/* LOGOUT */
+
+function logout(){
+
+location.reload();
+
+}
+
+/* LOAD DATA */
+
+function loadStudents(){
+
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+let table = document.getElementById("studentTable");
+
+table.innerHTML = "";
+
+students.forEach((student,index)=>{
+
+table.innerHTML += `
+
+<tr>
+
+<td contenteditable="true">${student.name}</td>
+
+<td contenteditable="true">${student.mobile}</td>
+
+<td contenteditable="true">${student.email}</td>
+
+<td contenteditable="true">${student.course}</td>
+
+<td contenteditable="true">${student.message}</td>
+
+<td>
+
+<button class="action-btn save" onclick="saveStudent(${index},this)">
+Save
+</button>
+
+<button class="action-btn delete" onclick="deleteStudent(${index})">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+/* SAVE */
+
+function saveStudent(index,button){
+
+let row = button.parentElement.parentElement;
+
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+students[index] = {
+
+name:row.cells[0].innerText,
+mobile:row.cells[1].innerText,
+email:row.cells[2].innerText,
+course:row.cells[3].innerText,
+message:row.cells[4].innerText
+
+};
+
+localStorage.setItem("students",JSON.stringify(students));
+
+alert("Student Updated");
+
+}
+
+/* DELETE */
+
+function deleteStudent(index){
+
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+students.splice(index,1);
+
+localStorage.setItem("students",JSON.stringify(students));
+
+loadStudents();
+
+}
+
+</script>
+
+</body>
+
+</html>
